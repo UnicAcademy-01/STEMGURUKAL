@@ -1,0 +1,154 @@
+body {
+  background: linear-gradient(135deg, #f4f6f9 50%, #e2e8f0 100%);
+  font-family: "Nunito", "Segoe UI", "Arial", sans-serif;
+}
+
+.app-header {
+  background: #117a8b;
+  color: white;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 28px;
+  box-shadow: 0 2px 18px rgba(48, 99, 185, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-logo {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: white;
+}
+
+.category-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: #117a8b;
+  text-transform: uppercase;
+  background: #d1ecf1;
+  padding: 12px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(17, 122, 139, 0.3);
+  margin-bottom: 24px;
+  letter-spacing: 2px;
+  user-select: none;
+}
+
+.card-container {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(48, 99, 185, 0.07);
+  padding: 86px 32px;
+  margin: 0 auto 32px auto;
+  max-width: 1120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.row.g-4.justify-content-center {
+  width: 100%;
+}
+
+.card-box {
+  background: linear-gradient(135deg, #3766d8, #2752a3 75%);
+  color: white;
+  font-weight: bold;
+  padding: 24px 20px;
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: box-shadow 0.3s, transform 0.2s;
+  box-shadow: 0 4px 18px rgba(48, 99, 185, 0.07);
+  font-size: 18px;
+  min-height: 170px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-box:hover {
+  transform: translateY(-7px) scale(1.04);
+  box-shadow: 0 8px 28px rgba(39, 82, 163, 0.12);
+  background: linear-gradient(135deg, #204b8f 70%, #223062 100%);
+}
+
+.card-box-1 {
+  background: linear-gradient(135deg, #3766d8, #2752a3 75%);
+  color: white;
+  font-weight: bold;
+  padding: 24px 50px;
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: box-shadow 0.3s, transform 0.2s;
+  box-shadow: 0 4px 18px rgba(48, 99, 185, 0.07);
+  font-size: 18px;
+  min-height: 170px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-box-1:hover {
+  transform: translateY(-7px) scale(1.04);
+  box-shadow: 0 8px 28px rgba(39, 82, 163, 0.12);
+  background: linear-gradient(135deg, #204b8f 70%, #223062 100%);
+}
+
+.chapter-card {
+  transition: box-shadow 0.3s, transform 0.18s;
+}
+
+.chapter-card:hover {
+  box-shadow: 0 8px 24px rgba(39, 82, 163, 0.18);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.accordion-button {
+  transition: background 0.3s, box-shadow 0.2s;
+  border-radius: 6px !important;
+}
+
+.accordion-button:not(.collapsed) {
+  box-shadow: 0 5px 18px rgba(39, 82, 163, 0.1);
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: bolder;
+  margin-bottom: 12px;
+  color: #204b8f;
+  letter-spacing: 1px;
+}
+
+.ad-box {
+  background: #e9ecef;
+  padding: 22px;
+  border: 2px dashed #b4b4b4;
+  text-align: center;
+  border-radius: 14px;
+  color: #6c6c6c;
+  font-size: 15px;
+  margin: 10px 0;
+}
+
+.btn-outline-primary {
+  border-radius: 8px;
+}
+
+.row.g-4.justify-content-center > div.col-6:nth-child(-n + 2) {
+  margin-top: 50px;
+}
+
+/* If you still use the React logo, keep this animation */
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
