@@ -1,0 +1,32 @@
+{
+  "subjects": {
+    "Mathematics": {
+      "Guide": {
+        "TamilNadu StateBoard Class 12": {
+          "12": "/maths12.json"
+        }
+      }
+    },
+    "Science": {
+      "Guide": {
+        "TamilNadu StateBoard Class 12": {
+          "12": "/science12.json"
+        }
+      }
+    },
+    "Technology": {
+      "Guide": {
+        "TamilNadu StateBoard Class 12": {
+          "12": "/technology12.json"
+        }
+      }
+    },
+    "Engineering": {
+      "Guide": {
+        "TamilNadu StateBoard Class 12": {
+          "12": "/engineering12.json"
+        }
+      }
+    }
+  }
+}

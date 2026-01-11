@@ -1,3 +1,22 @@
+* {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-drag: none !important;
+}
+
+.exercise-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.01); /* Invisible block */
+  z-index: 10;
+  cursor: not-allowed;
+}
 body {
   background: linear-gradient(135deg, #f4f6f9 50%, #e2e8f0 100%);
   font-family: "Nunito", "Segoe UI", "Arial", sans-serif;
@@ -52,34 +71,11 @@ body {
   width: 100%;
 }
 
-.card-box {
-  background: linear-gradient(135deg, #3766d8, #2752a3 75%);
-  color: white;
-  font-weight: bold;
-  padding: 24px 20px;
-  border-radius: 14px;
-  text-align: center;
-  cursor: pointer;
-  transition: box-shadow 0.3s, transform 0.2s;
-  box-shadow: 0 4px 18px rgba(48, 99, 185, 0.07);
-  font-size: 18px;
-  min-height: 170px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card-box:hover {
-  transform: translateY(-7px) scale(1.04);
-  box-shadow: 0 8px 28px rgba(39, 82, 163, 0.12);
-  background: linear-gradient(135deg, #204b8f 70%, #223062 100%);
-}
-
+.card-box,
 .card-box-1 {
   background: linear-gradient(135deg, #3766d8, #2752a3 75%);
   color: white;
   font-weight: bold;
-  padding: 24px 50px;
   border-radius: 14px;
   text-align: center;
   cursor: pointer;
@@ -92,14 +88,29 @@ body {
   justify-content: center;
 }
 
+.card-box {
+  padding: 24px 20px;
+}
+
+.card-box-1 {
+  padding: 24px 50px;
+}
+
+.card-box:hover,
 .card-box-1:hover {
   transform: translateY(-7px) scale(1.04);
   box-shadow: 0 8px 28px rgba(39, 82, 163, 0.12);
   background: linear-gradient(135deg, #204b8f 70%, #223062 100%);
 }
 
-.chapter-card {
-  transition: box-shadow 0.3s, transform 0.18s;
+.offcanvas-backdrop.show {
+  backdrop-filter: blur(10px);
+}
+
+.chapter-card,
+.list-group-item {
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .chapter-card:hover {
@@ -143,7 +154,7 @@ body {
   margin-top: 50px;
 }
 
-/* If you still use the React logo, keep this animation */
+/* React logo animation */
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -151,4 +162,73 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* === FEATURE GRID (5 round cards) === */
+
+/* Grid: always 3 columns, centered cards */
+.feature-grid {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Extra invisible ghost cell can be used in JSX if you want row2 centered:
+   <div className="feature-card feature-card--ghost" /> */
+.feature-card--ghost {
+  visibility: hidden;
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 360px; /* all descriptions wrap similarly */
+  min-height: 260px; /* ensures row 1 & row 2 same visual height */
+}
+
+.feature-icon {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  border: 4px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-icon i {
+  font-size: 42px;
+  color: #ffffff;
+}
+
+.feature-title {
+  margin-top: 18px;
+  font-weight: 700;
+  font-size: 18px;
+  color: #111827;
+}
+
+.feature-text {
+  margin-top: 8px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #4b5563;
+  max-width: 340px; /* avoid very wide texts */
+}
+
+.feature-row {
+  display: flex;
+  justify-content: space-between; /* first row spreads 3 items */
+  gap: 32px;
+}
+
+.feature-row-bottom {
+  justify-content: center; /* center the 2 items in row 2 */
 }

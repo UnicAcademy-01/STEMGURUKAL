@@ -1,0 +1,58 @@
+{
+  "Mathematics": {
+    "Guide": {
+      "TamilNadu StateBoard Class 12": {
+        "chapters": [
+          {
+            "chaptername": "Chapter 1: Applications of Matrices And Determinants",
+            "pdfpath": "/Chapter-1.pdf"
+          },
+          {
+            "chaptername": "Chapter 2: Complex Numbers",
+            "pdfpath": "/Chapter-2.pdf"
+          },
+          {
+            "chaptername": "Chapter 3: Theory of Equations",
+            "pdfpath": "/Chapter-3.pdf"
+          },
+          {
+            "chaptername": "Chapter 4: Inverse Trigonometry Functions",
+            "pdfpath": "/Chapter-4.pdf"
+          },
+          {
+            "chaptername": "Chapter 5: Two Dimensional Analytical Geometry-II",
+            "pdfpath": "/Chapter-5.pdf"
+          },
+          {
+            "chaptername": "Chapter 6: Applications of Vector Algebra",
+            "pdfpath": "/Chapter-6.pdf"
+          },
+          {
+            "chaptername": "Chapter 7: Applications of Differential Calculus",
+            "pdfpath": "/Chapter-7.pdf"
+          },
+          {
+            "chaptername": "Chapter 8: Differentials and Partial Derivatives",
+            "pdfpath": "/Chapter-8.pdf"
+          },
+          {
+            "chaptername": "Chapter 9: Applications of Integration",
+            "pdfpath": "/Chapter-9.pdf"
+          },
+          {
+            "chaptername": "Chapter 10: Ordinary Differential Equations",
+            "pdfpath": "/Chapter-10.pdf"
+          },
+          {
+            "chaptername": "Chapter 11: Probability Distributions",
+            "pdfpath": "/Chapter-11.pdf"
+          },
+          {
+            "chaptername": "Chapter 12: Discrete Mathematics",
+            "pdfpath": "/Chapter-12.pdf"
+          }
+        ]
+      }
+    }
+  }
+}
