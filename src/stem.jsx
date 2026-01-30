@@ -22,18 +22,6 @@ const categoriesData = [
   { name: "Mathematics" },
 ];
 
-const featureTexts = {
-  Guide:
-    "Quick chapter-wise notes with key points, formulas and shortcuts to revise before exams.",
-  "Question Bank":
-    "Topic-wise practice questions with varying difficulty to build speed and accuracy.",
-  Concept:
-    "Crystal-clear explanations of core ideas with examples to strengthen understanding.",
-  Practice:
-    "Step-by-step solved examples and worksheets to reinforce concepts through regular practice.",
-  Quiz: "Timed quizzes to test your preparation level and identify weak areas instantly.",
-};
-
 const categoryIcons = {
   Science: "bi bi-radioactive",
   Mathematics: "bi bi-calculator",
@@ -129,7 +117,7 @@ const renderBoardFooter = (boardLabel) => (
                 <li key={item} style={{ cursor: "pointer" }}>
                   {item}
                 </li>
-              )
+              ),
             )}
           </ul>
         </div>
@@ -168,6 +156,8 @@ function Stem() {
   const [openChapterPdf, setOpenChapterPdf] = useState(null);
   const [showSubscribePopup, setShowSubscribePopup] = useState(false);
   const [subscribeEmail, setSubscribeEmail] = useState("");
+  const [showComingSoon, setShowComingSoon] = useState(false);
+  const [comingSoonSubject, setComingSoonSubject] = useState("");
 
   // master + dynamic content
   const [masterData, setMasterData] = useState(null);
@@ -262,18 +252,28 @@ function Stem() {
         transform: hoveredClass ? "scale(0.95)" : "scale(1)",
         opacity: hoveredClass && hoveredClass !== sub ? 0.7 : 1,
       }}
-      onClick={() => setActiveSubject(activeSubject === sub ? null : sub)}
+      onClick={() => {
+        if (sub === "Mathematics") {
+          if (isMobile) {
+            // 📱 Mobile → open new page
+            setActiveSubject("Mathematics");
+            setPage("mathModules");
+          } else {
+            // 🖥 Desktop → show below (existing)
+            setActiveSubject(sub);
+          }
+        } else {
+          setComingSoonSubject(sub);
+          setShowComingSoon(true);
+        }
+      }}
       onMouseEnter={(e) => {
-        setHoveredClass(sub);
-        e.currentTarget.style.transform = "scale(1.05)";
-        e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.25)";
+        e.currentTarget.style.transform = "translateY(-8px)";
+        e.currentTarget.style.boxShadow = "0 16px 35px rgba(0,0,0,0.15)";
       }}
       onMouseLeave={(e) => {
-        setHoveredClass(null);
-        e.currentTarget.style.transform = hoveredClass
-          ? "scale(0.95)"
-          : "scale(1)";
-        e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.15)";
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
       }}
     >
       <div
@@ -291,11 +291,19 @@ function Stem() {
           fontSize: 24,
           marginBottom: 8,
           textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+          color: "#000000",
         }}
       >
         {sub}
       </div>
-      <div style={{ fontSize: 16, opacity: 0.95, lineHeight: 1.4 }}>
+      <div
+        style={{
+          fontSize: 16,
+          opacity: 0.95,
+          lineHeight: 1.4,
+          color: "#000000",
+        }}
+      >
         Complete curriculum for all classes 6-12
       </div>
       <div
@@ -305,6 +313,7 @@ function Stem() {
           right: 24,
           fontSize: 28,
           opacity: 0.8,
+          color: "#000000",
         }}
       >
         →
@@ -313,8 +322,15 @@ function Stem() {
   );
 
   const handleModuleClick = (module) => {
-    setSelectedModule(module);
-    setShowBoardSelect(true); // Show board selection
+    // ✅ Only Mathematics + Guide allowed
+    if (activeSubject === "Mathematics" && module === "Guide") {
+      setSelectedModule(module);
+      setShowBoardSelect(true); // open 2nd screenshot popup
+    } else {
+      // ❌ Everything else = Coming Soon
+      setComingSoonSubject(`${activeSubject} - ${module}`);
+      setShowComingSoon(true);
+    }
   };
 
   const handleBoardSelect = (board) => {
@@ -432,7 +448,7 @@ function Stem() {
         e.stopPropagation();
         return false;
       },
-      true
+      true,
     );
 
     // 2. Block PrintScreen + variants (multiple layers)
@@ -456,7 +472,7 @@ function Stem() {
             document
               .querySelectorAll('div[style*="SCREENSHOT"]')
               .forEach((el) => el.remove()),
-          1000
+          1000,
         );
         return false;
       }
@@ -571,25 +587,16 @@ function Stem() {
     selectedClass
   );
 
-  // screen width
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 992);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
     <div
       className="w-100"
       style={{
+        minHeight: "100vh", // ✅ MUST
         margin: 0,
         padding: 0,
-        backgroundColor: "white",
         overflowX: "hidden",
-        overflowY: "hidden",
+        overflowY: "visible", // ✅ OR remove completely
+        background: "transparent",
       }}
     >
       {/* TOP HEADER BAR */}
@@ -780,7 +787,7 @@ function Stem() {
                           <button
                             onClick={() => {
                               setOpenCategory(
-                                openCategory === item.name ? "" : item.name
+                                openCategory === item.name ? "" : item.name,
                               );
                             }}
                             style={{
@@ -1516,8 +1523,9 @@ function Stem() {
 
       {/* HOME PAGE */}
       {page === "home" && (
-        <div
-          className="p-4 d-flex justify-content-center"
+        <Container
+          fluid
+          className="mt-3"
           style={{
             position: "relative",
             overflow: "visible",
@@ -1533,6 +1541,52 @@ function Stem() {
               gap: "60px",
             }}
           >
+            {/* ===== GOOGLE ADSENSE TOP BANNERS ===== */}
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "1200px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "18px", // space between ads
+                margin: "0 auto",
+              }}
+            >
+              {/* TOP BANNER 1 */}
+              <div
+                style={{
+                  width: "100%",
+                  height: "60px",
+                  border: "2px dashed #cbd5e1",
+                  borderRadius: "14px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#64748b",
+                  fontSize: "14px",
+                }}
+              >
+                Google AdSense – Top Banner (728x90)
+              </div>
+
+              {/* TOP BANNER 2 (IN CONTENT STYLE) */}
+              <div
+                style={{
+                  width: "100%",
+                  height: "60px",
+                  border: "2px dashed #cbd5e1",
+                  borderRadius: "14px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#64748b",
+                  fontSize: "14px",
+                }}
+              >
+                Google AdSense – In-Content Ad
+              </div>
+            </div>
+
             {/* Blurred hero */}
             <div
               style={{
@@ -1578,6 +1632,7 @@ function Stem() {
                   Technology, Engineering and Mathematics designed to strengthen
                   your concepts.
                 </p>
+
                 <Button
                   variant="light"
                   style={{
@@ -1591,7 +1646,7 @@ function Stem() {
                   }}
                   onClick={() => {
                     const subcategoryElement = document.getElementById(
-                      "subcategory-content"
+                      "subcategory-content",
                     );
                     if (subcategoryElement) {
                       subcategoryElement.scrollIntoView({
@@ -1607,567 +1662,245 @@ function Stem() {
               </div>
             </div>
 
-            {/* Feature items BELOW hero - FULLY RESPONSIVE */}
+            {/* STEM OPTIONS FOR CLASS */}
+            {page === "stemForClass" && (
+              <div className="p-4" style={{ marginTop: "24px" }}>
+                ...
+              </div>
+            )}
             <div
               style={{
                 width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: isMobile ? "24px" : "40px",
-                paddingBottom: "40px",
+                padding: isMobile ? "20px 0" : "40px 0",
               }}
             >
-              <h2
-                style={{
-                  textAlign: "center",
-                  fontWeight: 800,
-                  fontSize: isMobile ? "24px" : "28px", // Mobile smaller
-                  lineHeight: "1.3",
-                  marginBottom: isMobile ? "24px" : "32px", // Responsive margin
-                }}
-              >
-                Start Your Learning Track
-              </h2>
-
-              {/* Row 1: Guide + Question Bank + Concept */}
               <div
-                className="feature-row"
                 style={{
-                  width: "100%",
                   display: "flex",
-                  flexWrap: "wrap",
-                  gap: isMobile ? "16px" : "24px",
+                  alignItems: "flex-start",
+
+                  width: "100%",
+                  gap: "12px",
                   justifyContent: "center",
-                  maxWidth: "900px",
                 }}
               >
-                {["Guide", "Question Bank", "Concept"].map((item) => (
+                {/* ⬅ LEFT ADSENSE */}
+                {!isMobile && (
                   <div
-                    key={item}
-                    className="feature-card col"
                     style={{
-                      flex: isMobile ? "1 1 150px" : "1 1 280px",
-                      maxWidth: isMobile ? "160px" : "280px",
+                      width: "50px",
+                      minHeight: "60%",
+                      border: "2px dashed #cbd5e1",
                       display: "flex",
-                      flexDirection: "column",
                       alignItems: "center",
+                      justifyContent: "center",
+                      color: "#64748b",
+                      writingMode: "vertical-rl",
+                      fontSize: "12px",
                     }}
                   >
-                    <div
-                      className="feature-icon"
-                      style={{
-                        background:
-                          subcardColors[item] ||
-                          "linear-gradient(135deg,#e3f2fd,#bbdefb)",
-                        width: isMobile ? "60px" : "80px", // Mobile smaller icon
-                        height: isMobile ? "60px" : "80px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginBottom: isMobile ? "12px" : "16px",
-                      }}
-                    >
-                      <i
-                        className={subcardIcons[item]}
-                        style={{ fontSize: isMobile ? "22px" : "28px" }} // Responsive icon
-                      />
-                    </div>
-
-                    <div
-                      className="feature-title"
-                      style={{
-                        fontWeight: 700,
-                        fontSize: isMobile ? "15px" : "18px", // Mobile smaller title
-                        textAlign: "center",
-                        marginBottom: isMobile ? "8px" : "12px",
-                        lineHeight: "1.3",
-                      }}
-                    >
-                      {item}
-                    </div>
-
-                    <p
-                      className="feature-text"
-                      style={{
-                        fontSize: isMobile ? "12px" : "14px", // Mobile smaller text
-                        lineHeight: "1.5",
-                        textAlign: "center",
-                        color: "#6b7280",
-                        margin: 0,
-                        wordBreak: "break-word", // Text wrap
-                      }}
-                    >
-                      {featureTexts[item]}
-                    </p>
+                    AdSense
                   </div>
-                ))}
-              </div>
+                )}
 
-              {/* Row 2: Practice + Quiz */}
-              <div
-                className="feature-row feature-row-bottom"
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: isMobile ? "16px" : "24px",
-                  justifyContent: "center",
-                  maxWidth: "600px",
-                }}
-              >
-                {["Practice", "Quiz"].map((item) => (
-                  <div
-                    key={item}
-                    className="feature-card col"
-                    style={{
-                      flex: isMobile ? "1 1 150px" : "1 1 260px",
-                      maxWidth: isMobile ? "160px" : "260px",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      className="feature-icon"
-                      style={{
-                        background:
-                          subcardColors[item] ||
-                          "linear-gradient(135deg,#e3f2fd,#bbdefb)",
-                        width: isMobile ? "60px" : "80px",
-                        height: isMobile ? "60px" : "80px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginBottom: isMobile ? "12px" : "16px",
-                      }}
-                    >
-                      <i
-                        className={subcardIcons[item]}
-                        style={{ fontSize: isMobile ? "22px" : "28px" }}
-                      />
-                    </div>
-
-                    <div
-                      className="feature-title"
-                      style={{
-                        fontWeight: 700,
-                        fontSize: isMobile ? "15px" : "18px",
-                        textAlign: "center",
-                        marginBottom: isMobile ? "8px" : "12px",
-                        lineHeight: "1.3",
-                      }}
-                    >
-                      {item}
-                    </div>
-
-                    <p
-                      className="feature-text"
-                      style={{
-                        fontSize: isMobile ? "12px" : "14px",
-                        lineHeight: "1.5",
-                        textAlign: "center",
-                        color: "#6b7280",
-                        margin: 0,
-                        wordBreak: "break-word",
-                      }}
-                    >
-                      {featureTexts[item]}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* STEM OPTIONS FOR CLASS 12 (OR SELECTED) */}
-            {page === "stemForClass" && (
-              <div className="p-4" style={{ marginTop: "24px" }}>
-                <button
-                  className="btn btn-outline-primary mb-3"
-                  onClick={() => setPage("home")}
-                >
-                  ← Back
-                </button>
-
+                {/* ✅ CENTER UI BOX */}
                 <div
-                  className="section-title"
+                  id="subcategory-content"
+                  className="container-fluid p-5"
                   style={{
-                    fontSize: "28px",
-                    fontWeight: 800,
-                    letterSpacing: "0.04em",
-                    color: "#12355B",
+                    maxWidth: "1250px",
+                    width: "100%",
+                    background:
+                      "linear-gradient(180deg, #f8fdf7 0%, #e8f5e8 100%)",
+                    borderRadius: "18px",
                   }}
                 >
-                  Select Your Stream – Class {selectedSchoolClass}
-                </div>
-
-                <div className="row g-4 mt-4">
-                  {categoriesData.map((cat) => (
-                    <div className="col-md-6" key={cat.name}>
-                      <div
-                        onClick={() => {
-                          setSelectedClass(selectedSchoolClass);
-                          setActiveCategory(cat);
-                          setSelectedSub("");
-                          setActiveSub("");
-                          setSelectedSyllabus("");
-                          setExpandedChapterIndex(null);
-                          setPage("subcategory");
-                        }}
-                        style={{
-                          borderRadius: 22,
-                          padding: "1.6rem 1.5rem",
-                          textAlign: "left",
-                          cursor: "pointer",
-                          background: "linear-gradient(120deg,#e3f2fd,#bbdefb)",
-                          boxShadow: "0 8px 20px rgba(15,23,42,0.15)",
-                          border: "1px solid rgba(145,179,255,0.5)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: 18 }}>
-                            {cat.name}
-                          </div>
-                          <div
-                            style={{
-                              fontSize: 13,
-                              color: "#374151",
-                              marginTop: 4,
-                            }}
-                          >
-                            Class {selectedSchoolClass} {cat.name} notes,
-                            questions, quizzes
-                          </div>
-                        </div>
-                        <span
-                          style={{
-                            width: 44,
-                            height: 44,
-                            borderRadius: "50%",
-                            backgroundColor: "#ffffff",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            boxShadow: "0 2px 8px rgba(15,23,42,0.25)",
-                          }}
-                        >
-                          <i
-                            className={categoryIcons[cat.name]}
-                            style={{ fontSize: 22 }}
-                          />
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div
-              id="subcategory-content"
-              className="container-fluid p-5"
-              style={{
-                marginTop: isMobile ? "0px" : "0px",
-                background: "linear-gradient(180deg, #f8fdf7 0%, #e8f5e8 100%)",
-              }}
-            >
-              {/* Header */}
-              <div style={{ textAlign: "center", marginBottom: "60px" }}>
-                <div
-                  style={{
-                    fontSize: 40,
-                    fontWeight: 900,
-                    background: "linear-gradient(135deg, #00796b, #00a680)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    marginBottom: 16,
-                    animation: "fadeInUp 1s ease",
-                  }}
-                >
-                  Choose Your Subject
-                </div>
-                <div
-                  style={{
-                    fontSize: 20,
-                    color: "#555",
-                    maxWidth: 600,
-                    margin: "0 auto",
-                  }}
-                >
-                  Explore comprehensive curriculum across Science, Technology,
-                  Engineering & Mathematics for Classes 6-12
-                </div>
-              </div>
-
-              <div className="row g-4 justify-content-center">
-                {subjects.map((sub) => (
-                  <div key={sub} className="col-lg-3 col-md-6 col-sm-12">
-                    {renderSubjectCard(sub)}
-                  </div>
-                ))}
-              </div>
-
-              {/* Modules Panel */}
-              {activeSubject && !showBoardSelect && (
-                <div
-                  style={{
-                    background: subjectStyles[activeSubject].gradient,
-                    borderRadius: 24,
-                    padding: "40px",
-                    marginTop: "40px",
-                    animation: "slideDown 0.5s ease",
-                  }}
-                >
-                  <div style={{ textAlign: "center", marginBottom: "32px" }}>
+                  {/* Header */}
+                  <div style={{ textAlign: "center", marginBottom: "60px" }}>
                     <div
                       style={{
-                        fontSize: 32,
-                        fontWeight: 800,
-                        marginBottom: 8,
-                        textShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                        fontSize: 40,
+                        fontWeight: 900,
+                        background: "linear-gradient(135deg, #00796b, #00a680)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        marginBottom: 16,
+                        animation: "fadeInUp 1s ease",
                       }}
                     >
-                      {activeSubject}
+                      Choose Your Subject
                     </div>
-                    <div style={{ fontSize: 18, opacity: 0.9 }}>
-                      Select learning module
-                    </div>
-                    <button
-                      onClick={() => setActiveSubject(null)}
-                      style={{
-                        marginTop: 16,
-                        padding: "8px 24px",
-                        background: "rgba(255,255,255,0.2)",
-                        border: "1px solid rgba(255,255,255,0.3)",
-                        borderRadius: 20,
-                        color: "white",
-                      }}
-                    >
-                      ← Back to Subjects
-                    </button>
                   </div>
 
-                  <div className="row g-3 justify-content-center">
-                    {subModules.map((module) => (
-                      <div key={module} className="col-md-6 col-lg-4 col-sm-12">
-                        <div
-                          className="module-card"
-                          style={{
-                            background: "rgba(255,255,255,0.95)",
-                            borderRadius: 16,
-                            padding: "24px",
-                            cursor: "pointer",
-                            boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-                            transition: "all 0.3s ease",
-                            color: "#333",
-                            border: "1px solid rgba(255,255,255,0.5)",
-                          }}
-                          onClick={() => handleModuleClick(module)}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform =
-                              "translateY(-8px)";
-                            e.currentTarget.style.boxShadow =
-                              "0 16px 35px rgba(0,0,0,0.15)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = "translateY(0)";
-                            e.currentTarget.style.boxShadow =
-                              "0 8px 25px rgba(0,0,0,0.1)";
-                          }}
-                        >
-                          <div style={{ fontSize: 48, marginBottom: 12 }}>
-                            {module === "Guide"
-                              ? "📚"
-                              : module === "Question Bank"
-                              ? "❓"
-                              : module === "Concept"
-                              ? "💡"
-                              : module === "Practice"
-                              ? "✏️"
-                              : "🧠"}
-                          </div>
-                          <div
-                            style={{
-                              fontWeight: 700,
-                              fontSize: 18,
-                              marginBottom: 6,
-                            }}
-                          >
-                            {module}
-                          </div>
-                          <div style={{ fontSize: 14, color: "#666" }}>
-                            Interactive learning materials
-                          </div>
-                        </div>
+                  {/* SUBJECT CARDS */}
+                  <div className="row g-4 justify-content-center">
+                    {subjects.map((sub) => (
+                      <div key={sub} className="col-lg-3 col-md-6 col-sm-12">
+                        {renderSubjectCard(sub)}
                       </div>
                     ))}
                   </div>
-                </div>
-              )}
 
-              {/* Board Selection Modal */}
-              {showBoardSelect && (
-                <div
-                  style={{
-                    position: "fixed",
-                    inset: 0,
-                    background: "rgba(0,0,0,0.5)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    zIndex: 9999,
-                    animation: "fadeIn 0.3s ease",
-                  }}
-                  onClick={() => setShowBoardSelect(false)}
-                >
-                  <div
-                    style={{
-                      background: "white",
-                      borderRadius: 24,
-                      padding: "40px",
-                      maxWidth: 400,
-                      width: "90%",
-                      boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
-                      animation: "slideUp 0.4s ease",
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div style={{ textAlign: "center", marginBottom: "32px" }}>
+                  {/* MODULES PANEL */}
+                  {activeSubject && !showBoardSelect && (
+                    <div
+                      style={{
+                        background: subjectStyles[activeSubject].gradient,
+                        borderRadius: 24,
+                        padding: "40px",
+                        marginTop: "40px",
+                        animation: "slideDown 0.5s ease",
+                      }}
+                    >
                       <div
-                        style={{
-                          fontSize: 28,
-                          fontWeight: 800,
-                          marginBottom: 8,
-                          color: "#111",
-                        }}
+                        style={{ textAlign: "center", marginBottom: "32px" }}
                       >
-                        {activeSubject} - {selectedModule}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: 18,
-                          color: "#666",
-                          marginBottom: 24,
-                        }}
-                      >
-                        Choose your board (TamilNadu StateBoard available)
-                      </div>
-                    </div>
-
-                    <div className="row g-3">
-                      {boards.map((board) => (
                         <div
-                          key={board}
-                          className="col-12"
-                          style={{ cursor: "pointer" }}
-                          onClick={() => handleBoardSelect(board)}
+                          style={{
+                            fontSize: 32,
+                            fontWeight: 800,
+                            marginBottom: 8,
+                            textShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                          }}
                         >
+                          {activeSubject}
+                        </div>
+
+                        <div style={{ fontSize: 18, opacity: 0.9 }}>
+                          Select learning module
+                        </div>
+
+                        <button
+                          onClick={() => setActiveSubject(null)}
+                          style={{
+                            marginTop: 16,
+                            padding: "8px 24px",
+                            background: "rgba(255,255,255,0.2)",
+                            border: "1px solid rgba(255,255,255,0.3)",
+                            borderRadius: 20,
+                            color: "black",
+                          }}
+                        >
+                          ← Back to Subjects
+                        </button>
+                      </div>
+
+                      <div className="row g-3 justify-content-center">
+                        {subModules.map((module) => (
                           <div
-                            style={{
-                              background:
-                                board === "TamilNadu StateBoard"
-                                  ? "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
-                                  : "#f8f9fa",
-                              color:
-                                board === "TamilNadu StateBoard"
-                                  ? "white"
-                                  : "#333",
-                              borderRadius: 16,
-                              padding: "20px",
-                              boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-                              transition: "all 0.3s ease",
-                              border: "2px solid transparent",
-                              ...(board === "TamilNadu StateBoard" && {
-                                boxShadow:
-                                  "0 12px 35px rgba(79, 172, 254, 0.4)",
-                              }),
-                            }}
+                            key={module}
+                            className="col-md-6 col-lg-4 col-sm-12"
                           >
                             <div
+                              className="module-card"
                               style={{
-                                fontWeight: 700,
-                                fontSize: 18,
-                                marginBottom: 4,
+                                background: "rgba(255,255,255,0.95)",
+                                borderRadius: 16,
+                                padding: "24px",
+                                cursor: "pointer",
+                                boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
+                                transition: "all 0.3s ease",
+                                color: "#333",
+                                border: "1px solid rgba(255,255,255,0.5)",
+                              }}
+                              onClick={() => handleModuleClick(module)}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.transform =
+                                  "translateY(-8px)";
+                                e.currentTarget.style.boxShadow =
+                                  "0 16px 35px rgba(0,0,0,0.15)";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.transform =
+                                  "translateY(0)";
+                                e.currentTarget.style.boxShadow =
+                                  "0 8px 25px rgba(0,0,0,0.1)";
                               }}
                             >
-                              {board}
-                            </div>
-                            <div
-                              style={{
-                                fontSize: 14,
-                                opacity:
-                                  board === "TamilNadu StateBoard" ? 0.9 : 0.6,
-                              }}
-                            >
-                              {board === "TamilNadu StateBoard"
-                                ? "✅ Fully Available"
-                                : "Coming Soon"}
+                              <div style={{ fontSize: 48, marginBottom: 12 }}>
+                                {module === "Guide"
+                                  ? "📚"
+                                  : module === "Question Bank"
+                                    ? "❓"
+                                    : module === "Concept"
+                                      ? "💡"
+                                      : module === "Practice"
+                                        ? "✏️"
+                                        : "🧠"}
+                              </div>
+
+                              <div
+                                style={{
+                                  fontWeight: 700,
+                                  fontSize: 18,
+                                  marginBottom: 6,
+                                }}
+                              >
+                                {module}
+                              </div>
+
+                              <div style={{ fontSize: 14, color: "#666" }}>
+                                {module === "Guide"
+                                  ? "Quick chapter-wise notes with key points, formulas and shortcuts to revise before exams."
+                                  : module === "Question Bank"
+                                    ? "Topic-wise practice questions with varying difficulty to build speed and accuracy."
+                                    : module === "Concept"
+                                      ? "Crystal-clear explanations of core ideas with examples to strengthen understanding."
+                                      : module === "Practice"
+                                        ? "Step-by-step solved examples and worksheets to reinforce concepts through regular practice."
+                                        : "Timed quizzes to test your preparation level and identify weak areas instantly."}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              )}
+                  )}
 
-              <style jsx>{`
-                @keyframes fadeInUp {
-                  from {
-                    opacity: 0;
-                    transform: translateY(30px);
-                  }
-                  to {
-                    opacity: 1;
-                    transform: translateY(0);
-                  }
-                }
-                @keyframes slideDown {
-                  from {
-                    opacity: 0;
-                    transform: translateY(-20px);
-                  }
-                  to {
-                    opacity: 1;
-                    transform: translateY(0);
-                  }
-                }
-                @keyframes fadeIn {
-                  from {
-                    opacity: 0;
-                  }
-                  to {
-                    opacity: 1;
-                  }
-                }
-                @keyframes slideUp {
-                  from {
-                    transform: translateY(20px);
-                    opacity: 0;
-                  }
-                  to {
-                    transform: translateY(0);
-                    opacity: 1;
-                  }
-                }
-                @media (max-width: 768px) {
-                  .subject-card,
-                  .module-card {
-                    margin-bottom: 20px !important;
-                  }
-                }
-              `}</style>
+                  {/* Animations */}
+                  <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+          .subject-card,
+          .module-card {
+            margin-bottom: 20px !important;
+          }
+        }
+      `}</style>
+                </div>
+
+                {/* ➡ RIGHT ADSENSE */}
+                {!isMobile && (
+                  <div
+                    style={{
+                      width: "50px",
+                      minHeight: "60%",
+                      border: "2px dashed #cbd5e1",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#64748b",
+                      writingMode: "vertical-rl",
+                      fontSize: "12px",
+                    }}
+                  >
+                    AdSense
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Benefits carousel */}
             <BenefitsCarousel />
 
-            {/* Classes footer */}
+            {/* Footer (unchanged) */}
             <div
               style={{
                 width: "100%",
@@ -2335,14 +2068,14 @@ function Stem() {
                         © {new Date().getFullYear()} STEMGURUKUL. All rights
                         reserved.
                       </span>
-                      <span>Made for Class 6–12 learners.</span>
+                      <span>Made for curious mind with lots of ❤️</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </Container>
       )}
 
       {/* SYLLABUS PAGE */}
@@ -2499,6 +2232,108 @@ function Stem() {
         </div>
       )}
 
+      {/* Board Selection Modal */}
+      {showBoardSelect && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+            animation: "fadeIn 0.3s ease",
+          }}
+          onClick={() => setShowBoardSelect(false)}
+        >
+          <div
+            style={{
+              background: "white",
+              borderRadius: 24,
+              padding: "40px",
+              maxWidth: 400,
+              width: "90%",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+              animation: "slideUp 0.4s ease",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ textAlign: "center", marginBottom: "32px" }}>
+              <div
+                style={{
+                  fontSize: 28,
+                  fontWeight: 800,
+                  marginBottom: 8,
+                  color: "#111",
+                }}
+              >
+                {activeSubject} - {selectedModule}
+              </div>
+              <div
+                style={{
+                  fontSize: 18,
+                  color: "#666",
+                  marginBottom: 24,
+                }}
+              >
+                Choose your board (TamilNadu StateBoard available)
+              </div>
+            </div>
+
+            <div className="row g-3">
+              {boards.map((board) => (
+                <div
+                  key={board}
+                  className="col-12"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleBoardSelect(board)}
+                >
+                  <div
+                    style={{
+                      background:
+                        board === "TamilNadu StateBoard"
+                          ? "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+                          : "#f8f9fa",
+                      color:
+                        board === "TamilNadu StateBoard" ? "white" : "#333",
+                      borderRadius: 16,
+                      padding: "20px",
+                      boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
+                      transition: "all 0.3s ease",
+                      border: "2px solid transparent",
+                      ...(board === "TamilNadu StateBoard" && {
+                        boxShadow: "0 12px 35px rgba(79, 172, 254, 0.4)",
+                      }),
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontWeight: 700,
+                        fontSize: 18,
+                        marginBottom: 4,
+                      }}
+                    >
+                      {board}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 14,
+                        opacity: board === "TamilNadu StateBoard" ? 0.9 : 0.6,
+                      }}
+                    >
+                      {board === "TamilNadu StateBoard"
+                        ? "✅ Fully Available"
+                        : "Coming Soon"}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* SELECT SCHOOL CLASS (6–12) */}
       {page === "classSelect" && (
         <div className="p-4" style={{ marginTop: "24px" }}>
@@ -2547,6 +2382,101 @@ function Stem() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+      {/* MOBILE MATHEMATICS MODULE PAGE */}
+      {page === "mathModules" && (
+        <div
+          className="p-4"
+          style={{
+            marginTop: "24px",
+            background: "linear-gradient(180deg,#f3f8ff 0%,#ffffff 45%)",
+            minHeight: "calc(100vh - 140px)",
+          }}
+        >
+          <button
+            className="btn btn-outline-primary mb-4"
+            onClick={() => setPage("home")}
+            style={{ borderRadius: 12 }}
+          >
+            ← Back
+          </button>
+
+          <h3
+            style={{
+              fontWeight: 900,
+              marginBottom: 28,
+              letterSpacing: "0.04em",
+              color: "#0f172a",
+            }}
+          >
+            Mathematics – Select Module
+          </h3>
+
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "18px" }}
+          >
+            {subModules.map((module, index) => {
+              const gradients = [
+                "linear-gradient(135deg,#42a5f5,#90caf9)",
+                "linear-gradient(135deg,#ab47bc,#ce93d8)",
+                "linear-gradient(135deg,#66bb6a,#a5d6a7)",
+                "linear-gradient(135deg,#ffa726,#ffcc80)",
+                "linear-gradient(135deg,#ef5350,#f48fb1)",
+              ];
+
+              const icons = ["📚", "❓", "💡", "✏️", "🧠"];
+
+              return (
+                <div
+                  key={module}
+                  onClick={() => {
+                    if (module === "Guide") {
+                      setActiveCategory({ name: "Mathematics" });
+                      setSelectedSub("Guide");
+                      setActiveSubject("Mathematics");
+                      setSelectedModule("Guide");
+
+                      setSelectedSyllabus("TamilNadu StateBoard Class 12");
+                      setPage("class");
+                    } else {
+                      setComingSoonSubject(`Mathematics - ${module}`);
+                      setShowComingSoon(true);
+                    }
+                  }}
+                  style={{
+                    background: gradients[index],
+                    borderRadius: 20,
+                    padding: "20px 18px",
+                    color: "#000",
+                    fontWeight: 800,
+                    fontSize: 18,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    boxShadow: "0 14px 30px rgba(0,0,0,0.18)",
+                    cursor: "pointer",
+                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                  }}
+                  onTouchStart={(e) =>
+                    (e.currentTarget.style.transform = "scale(0.97)")
+                  }
+                  onTouchEnd={(e) =>
+                    (e.currentTarget.style.transform = "scale(1)")
+                  }
+                >
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 14 }}
+                  >
+                    <span style={{ fontSize: 30 }}>{icons[index]}</span>
+                    <span>{module}</span>
+                  </div>
+
+                  <span style={{ fontSize: 22 }}>→</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -2702,11 +2632,7 @@ function Stem() {
                               }}
                             >
                               <button
-                                className="btn btn-sm px-3"
-                                style={{
-                                  background: "rgba(255,255,255,0.2)",
-                                  border: "none",
-                                }}
+                                className="pdf-nav-btn"
                                 onClick={() =>
                                   setCurrentPage((p) => Math.max(p - 1, 1))
                                 }
@@ -2714,24 +2640,16 @@ function Stem() {
                               >
                                 ← Prev
                               </button>
-                              <span
-                                style={{
-                                  fontSize: "14px",
-                                  minWidth: "100px",
-                                  textAlign: "center",
-                                }}
-                              >
+
+                              <span className="pdf-page-indicator">
                                 Page {currentPage} / {numPages}
                               </span>
+
                               <button
-                                className="btn btn-sm px-3"
-                                style={{
-                                  background: "rgba(255,255,255,0.2)",
-                                  border: "none",
-                                }}
+                                className="pdf-nav-btn"
                                 onClick={() =>
                                   setCurrentPage((p) =>
-                                    Math.min(p + 1, numPages)
+                                    Math.min(p + 1, numPages),
                                   )
                                 }
                                 disabled={currentPage >= numPages}
@@ -2771,16 +2689,6 @@ function Stem() {
                               return false;
                             }
                           }}
-                          style={{
-                            background:
-                              selectedClass === 12 && !isLoggedIn
-                                ? "#f8d7da"
-                                : "#4caf50",
-                            borderColor:
-                              selectedClass === 12 && !isLoggedIn
-                                ? "#f5c6cb"
-                                : "#4caf50",
-                          }}
                         >
                           📥{" "}
                           {selectedClass === 12 && !isLoggedIn
@@ -2802,6 +2710,7 @@ function Stem() {
                       </div>
 
                       {/* FULL PAGE PDF */}
+                      {/* FULL PAGE PDF */}
                       <div
                         style={{
                           padding: "24px",
@@ -2813,8 +2722,38 @@ function Stem() {
                           justifyContent: "center",
                           background:
                             "linear-gradient(180deg, #fafbfc 0%, #f0f4f8 100%)",
+                          position: "relative", // ✅ REQUIRED for arrows
                         }}
                       >
+                        {/* 🔵 LEFT ARROW */}
+                        <div
+                          className={`pdf-side-nav left ${
+                            currentPage <= 1 ? "disabled" : ""
+                          }`}
+                          onClick={() => {
+                            if (currentPage > 1) {
+                              setCurrentPage((p) => p - 1);
+                            }
+                          }}
+                        >
+                          <i className="bi bi-chevron-left"></i>
+                        </div>
+
+                        {/* 🔵 RIGHT ARROW */}
+                        <div
+                          className={`pdf-side-nav right ${
+                            currentPage >= numPages ? "disabled" : ""
+                          }`}
+                          onClick={() => {
+                            if (currentPage < numPages) {
+                              setCurrentPage((p) => p + 1);
+                            }
+                          }}
+                        >
+                          <i className="bi bi-chevron-right"></i>
+                        </div>
+
+                        {/* PDF DOCUMENT */}
                         {openChapterPdf ? (
                           <Document
                             file={openChapterPdf}
@@ -2851,8 +2790,8 @@ function Stem() {
                               pageNumber={currentPage}
                               width={Math.min(
                                 900,
-                                (window.innerWidth || 1200) * 0.92
-                              )} // FULL WIDTH
+                                (window.innerWidth || 1200) * 0.92,
+                              )}
                               renderTextLayer={false}
                               renderAnnotationLayer={false}
                             />
@@ -3108,6 +3047,49 @@ function Stem() {
             </button>
           </div>
         </div>
+      </Modal>
+      {/* COMING SOON POPUP */}
+      <Modal
+        show={showComingSoon}
+        onHide={() => setShowComingSoon(false)}
+        centered
+        size="md"
+      >
+        <Modal.Body
+          style={{
+            padding: "40px",
+            textAlign: "center",
+            borderRadius: "20px",
+            background: "linear-gradient(135deg,#f0f9ff,#e0f2fe)",
+          }}
+        >
+          <div style={{ fontSize: "60px", marginBottom: "16px" }}>🚧</div>
+
+          <h3
+            style={{ fontWeight: 800, marginBottom: "12px", color: "#0f172a" }}
+          >
+            {comingSoonSubject}
+          </h3>
+
+          <p
+            style={{ fontSize: "16px", color: "#334155", marginBottom: "24px" }}
+          >
+            This subject content is coming soon. We are working hard to bring it
+            to you!
+          </p>
+
+          <Button
+            variant="primary"
+            style={{
+              borderRadius: "999px",
+              padding: "8px 32px",
+              fontWeight: 700,
+            }}
+            onClick={() => setShowComingSoon(false)}
+          >
+            OK
+          </Button>
+        </Modal.Body>
       </Modal>
 
       <ToastContainer

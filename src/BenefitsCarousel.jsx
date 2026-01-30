@@ -8,7 +8,7 @@ function BenefitsCarousel() {
         width: "100%",
         backgroundColor: "#00796b",
         padding: "70px 0",
-        marginTop: "40px",
+        marginTop: "10px",
       }}
     >
       <div
@@ -134,7 +134,6 @@ function BenefitsCarousel() {
                 borderRadius: 36,
                 padding: "56px 110px",
                 maxWidth: 1000,
-                margin: "0 auto",
                 color: "#111827",
                 boxShadow: "0 26px 70px rgba(0,0,0,0.35)",
                 border: "1px solid rgba(148,163,184,0.35)",
