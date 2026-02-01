@@ -9,11 +9,10 @@ const bodyParser = require("body-parser");
 const app = express();
 
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "STEMGURUKUL",
-  password: "root",
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 pool.connect((err) => {
@@ -28,17 +27,17 @@ app.use(
   helmet({
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
-  })
+  }),
 );
 
 // ✅ FIXED: Serve subject folders + PDFs
 app.use(
   "/maths12-guide",
-  express.static(path.join(__dirname, "public/maths12-guide"))
+  express.static(path.join(__dirname, "public/maths12-guide")),
 );
 app.use(
   "/science12-guide",
-  express.static(path.join(__dirname, "public/science12-guide"))
+  express.static(path.join(__dirname, "public/science12-guide")),
 );
 // Add more subjects...
 
@@ -47,7 +46,7 @@ app.use((req, res, next) => {
   if (req.path.match(/\.(pdf|json)$/)) {
     res.set(
       "Content-Type",
-      req.path.endsWith(".pdf") ? "application/pdf" : "application/json"
+      req.path.endsWith(".pdf") ? "application/pdf" : "application/json",
     );
     res.set("Cross-Origin-Embedder-Policy", "unsafe-none");
     res.set("Cross-Origin-Resource-Policy", "cross-origin");
@@ -64,7 +63,7 @@ app.post("/api/signup", async (req, res) => {
 
     const emailCheck = await pool.query(
       "SELECT 1 FROM user_table WHERE emailid = $1",
-      [emailID]
+      [emailID],
     );
 
     if (emailCheck.rows.length > 0) {
@@ -77,7 +76,7 @@ app.post("/api/signup", async (req, res) => {
       `INSERT INTO user_table (name, mobileno, emailid, password)
        VALUES ($1, $2, $3, $4)
        RETURNING user_id`,
-      [name, mobileNo, emailID, hashedPassword]
+      [name, mobileNo, emailID, hashedPassword],
     );
 
     res.json({ message: "✅ Registered", user: result.rows[0] });
@@ -109,7 +108,7 @@ app.post("/api/subscribe", async (req, res) => {
          subscribers = EXCLUDED.subscribers,
          updated_at = now()
        RETURNING subscribe_id, emailid, subscribers, created_at, updated_at`,
-      [email, subsValue]
+      [email, subsValue],
     );
 
     return res.json({
@@ -129,7 +128,7 @@ app.post("/api/login", async (req, res) => {
     // 1. Check email exists
     const userQuery = await pool.query(
       "SELECT * FROM user_table WHERE emailid = $1",
-      [emailid]
+      [emailid],
     );
 
     if (userQuery.rows.length === 0) {
