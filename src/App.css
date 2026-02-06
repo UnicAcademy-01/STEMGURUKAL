@@ -180,8 +180,8 @@ button {
   transform: translateY(-50%);
   z-index: 30;
 
-  width: 54px;
-  height: 54px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
 
   display: flex;
@@ -191,7 +191,6 @@ button {
   background: linear-gradient(135deg, #2563eb, #0ea5e9);
   color: white;
 
-  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.45);
   cursor: pointer;
 
   transition: all 0.25s ease;
@@ -221,7 +220,7 @@ button {
 }
 
 .pdf-side-nav i {
-  font-size: 26px;
+  font-size: 18px;
 }
 
 /* Mobile adjustment */
