@@ -180,8 +180,8 @@ button {
   transform: translateY(-50%);
   z-index: 30;
 
-  width: 26px;
-  height: 26px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
 
   display: flex;
