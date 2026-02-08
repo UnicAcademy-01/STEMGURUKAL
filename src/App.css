@@ -192,20 +192,10 @@ button {
   color: white;
 
   cursor: pointer;
-
-  transition: all 0.25s ease;
-}
-
-.pdf-side-nav:hover {
-  transform: translateY(-50%) scale(1.12);
-}
-
-.pdf-side-nav:active {
-  transform: translateY(-50%) scale(0.95);
 }
 
 .pdf-side-nav.left {
-  left: 16px;
+  left: 15px;
 }
 
 .pdf-side-nav.right {
@@ -225,10 +215,31 @@ button {
 /* Mobile adjustment */
 @media (max-width: 768px) {
   .pdf-side-nav.left {
-    left: 6px;
+    left: 0px;
   }
   .pdf-side-nav.right {
-    right: 6px;
+    right: 0px;
+  }
+  .pdf-side-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 30;
+
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(135deg, #2563eb, #0ea5e9);
+    color: white;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
   }
 }
 .ad-box {

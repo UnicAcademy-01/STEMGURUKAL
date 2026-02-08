@@ -125,6 +125,32 @@ const renderBoardFooter = (boardLabel) => (
     </div>
   </div>
 );
+const FloatingPdfIcon = ({ onClick }) => {
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        position: "absolute", // 🔥 PDF container-ku relative
+        top: "16px",
+        right: "16px",
+        transform: "translateY(-50%)",
+        width: "56px",
+        height: "56px",
+        borderRadius: "16px",
+        background: "#1e293b",
+        color: "#fff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: "pointer",
+        boxShadow: "0 12px 30px rgba(0,0,0,0.35)",
+        zIndex: 50,
+      }}
+    >
+      <i className="bi bi-box-arrow-up-right fs-4"></i>
+    </div>
+  );
+};
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -2598,68 +2624,6 @@ function Stem() {
                       }}
                     >
                       {/* Sticky Navigation */}
-                      {numPages && (
-                        <div
-                          style={{
-                            position: "sticky",
-                            top: 0,
-                            zIndex: 20,
-                            background:
-                              "linear-gradient(135deg, #42a5f5, #1976d2)",
-                            color: "white",
-                            padding: "12px 20px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              flexWrap: "wrap",
-                              gap: "8px",
-                            }}
-                          >
-                            <div
-                              style={{ fontWeight: "bold", fontSize: "16px" }}
-                            >
-                              📖 {chapter.chaptername}
-                            </div>
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "12px",
-                              }}
-                            >
-                              <button
-                                className="pdf-nav-btn"
-                                onClick={() =>
-                                  setCurrentPage((p) => Math.max(p - 1, 1))
-                                }
-                                disabled={currentPage <= 1}
-                              >
-                                ← Prev
-                              </button>
-
-                              <span className="pdf-page-indicator">
-                                Page {currentPage} / {numPages}
-                              </span>
-
-                              <button
-                                className="pdf-nav-btn"
-                                onClick={() =>
-                                  setCurrentPage((p) =>
-                                    Math.min(p + 1, numPages),
-                                  )
-                                }
-                                disabled={currentPage >= numPages}
-                              >
-                                Next →
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
 
                       {/* Controls */}
                       <div
@@ -2668,6 +2632,7 @@ function Stem() {
                           background: "#f8f9fa",
                           borderBottom: "1px solid #e0e6ed",
                           display: "flex",
+                          justifyContent: "flex-end",
                           gap: "12px",
                           flexWrap: "wrap",
                         }}
@@ -2752,6 +2717,13 @@ function Stem() {
                         >
                           <i className="bi bi-chevron-right"></i>
                         </div>
+                        {/* 🔔 RIGHT SIDE FLOATING ICON */}
+                        <FloatingPdfIcon
+                          onClick={() => {
+                            toast.info("Inter Alerts clicked 🚀");
+                            // or open modal / redirect / sidebar
+                          }}
+                        />
 
                         {/* PDF DOCUMENT */}
                         {openChapterPdf ? (
@@ -2810,6 +2782,40 @@ function Stem() {
                           </div>
                         )}
                       </div>
+                      {numPages && (
+                        <div
+                          style={{
+                            marginTop: "24px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            gap: "16px",
+                            padding: "12px",
+                            background: "#e3f2fd",
+                            borderRadius: "14px",
+                          }}
+                        >
+                          <button
+                            className="btn btn-primary btn-sm"
+                            disabled={currentPage <= 1}
+                            onClick={() => setCurrentPage((p) => p - 1)}
+                          >
+                            ← Prev
+                          </button>
+
+                          <span style={{ fontWeight: 700 }}>
+                            Page {currentPage} / {numPages}
+                          </span>
+
+                          <button
+                            className="btn btn-primary btn-sm"
+                            disabled={currentPage >= numPages}
+                            onClick={() => setCurrentPage((p) => p + 1)}
+                          >
+                            Next →
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
